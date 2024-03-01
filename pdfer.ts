@@ -106,7 +106,7 @@ export const createDashboardPDF = async () => {
   await page.emulateMediaType('screen');
   await page.setContent(dom, { waitUntil: 'load' });
 
-  const pdfFileName = `pdfs/${willyDashId}_${new Date()}.pdf`;
+  const pdfFileName = `${willyDashId}_${new Date()}.pdf`;
   const pdfFile = await page.pdf({ format: 'A4', path: pdfFileName });
   fs.writeFileSync(pdfFileName, pdfFile);
 
