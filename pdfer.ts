@@ -24,54 +24,17 @@ const shopDomain = 'madisonbraids.myshopify.com'
 
 export const createDashboardPDF = async () => {
   const browser = await puppeteer.launch({
-    headless: true,
+    headless: false,
     timeout: 60000,
-    args: [
-      '--disable-features=IsolateOrigins',
-      '--disable-site-isolation-trials',
-      '--autoplay-policy=user-gesture-required',
-      '--disable-background-networking',
-      '--disable-background-timer-throttling',
-      '--disable-backgrounding-occluded-windows',
-      '--disable-breakpad',
-      '--disable-client-side-phishing-detection',
-      '--disable-component-update',
-      '--disable-default-apps',
-      '--disable-dev-shm-usage',
-      '--disable-domain-reliability',
-      '--disable-extensions',
-      '--disable-features=AudioServiceOutOfProcess',
-      '--disable-hang-monitor',
-      '--disable-ipc-flooding-protection',
-      '--disable-notifications',
-      '--disable-offer-store-unmasked-wallet-cards',
-      '--disable-popup-blocking',
-      '--disable-print-preview',
-      '--disable-prompt-on-repost',
-      '--disable-renderer-backgrounding',
-      '--disable-setuid-sandbox',
-      '--disable-speech-api',
-      '--disable-sync',
-      '--hide-scrollbars',
-      '--ignore-gpu-blacklist',
-      '--metrics-recording-only',
-      '--mute-audio',
-      '--no-default-browser-check',
-      '--no-first-run',
-      '--no-pings',
-      '--no-sandbox',
-      '--no-zygote',
-      '--password-store=basic',
-      '--use-gl=swiftshader',
-      '--use-mock-keychain',
-    ],
+    args: []
   });
 
   const ua =
     'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.181 Safari/537.36';
   const page = await browser.newPage();
   await page.setUserAgent(ua);
-  await page.setViewport({ width: 1280, height: 800, deviceScaleFactor: 2 });
+  await page.emulateMediaType('screen');
+  await page.setViewport({ width: 1280, height: 8000, deviceScaleFactor: 2 });
 
   logger.info('pdf: started');
   const appLink = 'https://app.triplewhale.com';
@@ -82,29 +45,27 @@ export const createDashboardPDF = async () => {
   });
   await page.type('#login-email-input', REPORT_ADMIN_USER);
   await page.type('#login-password-input', REPORT_ADMIN_PWD);
-  await sleep(4000)
+  await sleep(500)
 
   logger.info('pdf: trying to log in');
   await page.click('.continue-button');
   logger.info('pdf: logged in');
-  await sleep(4000)
+  await sleep(500)
 
-  logger.info('pdf: going to page');
+  logger.info('pdf: loading page');
   await page.goto(url, {
     waitUntil: 'networkidle2',
   });
-  logger.info('pdf: page opened: ' + url);
+  logger.info('pdf: page loaded: ' + url);
 
-  const elementToScreenshot = `.mantine-AppShell-main`;
-  await page.$(elementToScreenshot);
-  logger.info('pdf: element found: ' + elementToScreenshot);
-  logger.info('pdf: creating PDF');
-
-  const dom = await page.$eval(elementToScreenshot, (element) => {
-    return element.innerHTML;
-  });
-  await page.emulateMediaType('screen');
-  await page.setContent(dom, { waitUntil: 'load' });
+  // const screenshotFileName = `${willyDashId}_${new Date()}.jpg`;
+  const elementToScreenshot = `.w-full.h-full[class*="container"]`; //slick!
+  const mainElement = await page.$(elementToScreenshot);
+  // await mainElement?.screenshot({
+  //   path: screenshotFileName,
+  //   fullPage: true,
+  // });
+  logger.info('pdf: element found & sreenshotted: ' + elementToScreenshot);
 
   const pdfFileName = `${willyDashId}_${new Date()}.pdf`;
   const pdfFile = await page.pdf({ format: 'A4', path: pdfFileName });
