@@ -34,7 +34,7 @@ export const createDashboardPDF = async () => {
   const page = await browser.newPage();
   await page.setUserAgent(ua);
   await page.emulateMediaType('screen');
-  await page.setViewport({ width: 1280, height: 8000, deviceScaleFactor: 2 });
+  await page.setViewport({ width: 1880, height: 8000, deviceScaleFactor: 2 });
 
   logger.info('pdf: started');
   const appLink = 'https://app.triplewhale.com';
@@ -45,12 +45,12 @@ export const createDashboardPDF = async () => {
   });
   await page.type('#login-email-input', REPORT_ADMIN_USER);
   await page.type('#login-password-input', REPORT_ADMIN_PWD);
-  await sleep(500)
+  await sleep(2000)
 
   logger.info('pdf: trying to log in');
   await page.click('.continue-button');
   logger.info('pdf: logged in');
-  await sleep(500)
+  await sleep(2000)
 
   logger.info('pdf: loading page');
   await page.goto(url, {
@@ -60,7 +60,7 @@ export const createDashboardPDF = async () => {
 
   // const screenshotFileName = `${willyDashId}_${new Date()}.jpg`;
   const elementToScreenshot = `.w-full.h-full[class*="container"]`; //slick!
-  const mainElement = await page.$(elementToScreenshot);
+  await page.$(elementToScreenshot);
   // await mainElement?.screenshot({
   //   path: screenshotFileName,
   //   fullPage: true,
