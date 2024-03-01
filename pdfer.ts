@@ -34,7 +34,7 @@ export const createDashboardPDF = async () => {
   const page = await browser.newPage();
   await page.setUserAgent(ua);
   await page.emulateMediaType('screen');
-  await page.setViewport({ width: 1880, height: 8000, deviceScaleFactor: 2 });
+  await page.setViewport({ width: 767, height: 1440 });
 
   logger.info('pdf: started');
   const appLink = 'https://app.triplewhale.com';
