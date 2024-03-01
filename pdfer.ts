@@ -34,7 +34,7 @@ export const createDashboardPDF = async () => {
   const page = await browser.newPage();
   await page.setUserAgent(ua);
   await page.emulateMediaType('screen');
-  await page.setViewport({ width: 767, height: 1440 });
+  await page.setViewport({ width: 700, height: 3000 });
 
   logger.info('pdf: started');
   const appLink = 'https://app.triplewhale.com';
@@ -68,7 +68,7 @@ export const createDashboardPDF = async () => {
   logger.info('pdf: element found & sreenshotted: ' + elementToScreenshot);
 
   const pdfFileName = `${willyDashId}_${new Date()}.pdf`;
-  const pdfFile = await page.pdf({ format: 'A4', path: pdfFileName });
+  const pdfFile = await page.pdf({ width: 700, height: 3000, path: pdfFileName });
   fs.writeFileSync(pdfFileName, pdfFile);
 
   await browser.close();
