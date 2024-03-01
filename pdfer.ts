@@ -19,7 +19,7 @@ export function sleep(ms: number) {
 const REPORT_ADMIN_USER = 'michael@triplewhale.com'
 const REPORT_ADMIN_PWD = 'TestPassword1'
 
-const willyDashId = ''
+const willyDashId = 'AmmcFZ69sXEyXk13HYSe'
 const shopDomain = 'madisonbraids.myshopify.com'
 
 export const createDashboardPDF = async () => {
