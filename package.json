@@ -1,6 +1,6 @@
 {
   "scripts": {
-    "scrape": "tsx pdfer.ts"
+    "pdfer": "tsx pdfer.ts"
   },
   "dependencies": {
     "puppeteer": "^22.3.0",

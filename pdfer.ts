@@ -91,7 +91,7 @@ export const createDashboardPDF = async () => {
 
   logger.info('pdf: going to page');
   await page.goto(url, {
-    waitUntil: 'networkidle0',
+    waitUntil: 'networkidle2',
   });
   logger.info('pdf: page opened: ' + url);
 
@@ -106,7 +106,7 @@ export const createDashboardPDF = async () => {
   await page.emulateMediaType('screen');
   await page.setContent(dom, { waitUntil: 'load' });
 
-  const pdfFileName = `/pdfs/${willyDashId}_${new Date()}.pdf`;
+  const pdfFileName = `pdfs/${willyDashId}_${new Date()}.pdf`;
   const pdfFile = await page.pdf({ format: 'A4', path: pdfFileName });
   fs.writeFileSync(pdfFileName, pdfFile);
 
