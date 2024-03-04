@@ -9,7 +9,7 @@ import {
   SHOP_DOMAIN,
   VIEWPORT_WIDTH,
   VIEWPORT_HEIGHT,
-  pdfFormat,
+  PDF_FORMAT,
 } from './constants'
 
 export const createDashboardPDF = async () => {
@@ -61,7 +61,7 @@ export const createDashboardPDF = async () => {
   }
 
   const pdfFileName = `${WILLY_DASH_ID}_${new Date()}.pdf`
-  const pdfFile = await page.pdf({ format: pdfFormat, path: pdfFileName })
+  const pdfFile = await page.pdf({ format: PDF_FORMAT, path: pdfFileName })
   fs.writeFileSync(PDF_DIR + pdfFileName, pdfFile)
   fs.unlinkSync(pdfFileName)
   logger.info('pdf: created & saved')
