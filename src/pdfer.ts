@@ -1,13 +1,27 @@
 import fs from 'fs'
 import puppeteer from 'puppeteer'
 import { logger, sleep } from './helpers'
-import { REPORT_ADMIN_USER, REPORT_ADMIN_PWD, willyDashId, shopDomain } from './constants'
+import {
+  PDF_DIR,
+  REPORT_ADMIN_USER,
+  REPORT_ADMIN_PWD,
+  WILLY_DASH_ID,
+  SHOP_DOMAIN,
+  VIEWPORT_WIDTH,
+  VIEWPORT_HEIGHT,
+  pdfFormat,
+} from './constants'
 
 export const createDashboardPDF = async () => {
   const browser = await puppeteer.launch({
-    headless: false,
+    headless: true,
     timeout: 60000,
-    args: ['--start-maximized'],
+    args: [
+      '--start-maximized',
+      `--window-size=${VIEWPORT_WIDTH},${VIEWPORT_HEIGHT}`,
+      '--no-sandbox',
+      '--disable-setuid-sandbox',
+    ],
     defaultViewport: null,
   })
 
@@ -16,7 +30,7 @@ export const createDashboardPDF = async () => {
 
   logger.info('pdf: started')
   const appLink = 'https://app.triplewhale.com'
-  const url = `${appLink}/dashboards/${willyDashId}?shop-id=${shopDomain}`
+  const url = `${appLink}/dashboards/${WILLY_DASH_ID}?shop-id=${SHOP_DOMAIN}`
 
   await page.goto(`${appLink}/signin`, { waitUntil: 'domcontentloaded' })
   await page.waitForSelector('#login-email-input', {
@@ -39,17 +53,21 @@ export const createDashboardPDF = async () => {
   await page.evaluate(() => {
     const header = document.querySelector('.willy-dash-header')
     const mainPane = document.querySelector('.willy-main-pane')
-    document.body.innerHTML = `<div>${header?.outerHTML}${mainPane?.outerHTML}</div>`
+    document.body.innerHTML = `<div class="w-full"><div class="p-6.5">${header?.innerHTML}</div>${mainPane?.innerHTML}</div>`
   })
 
-  const pdfFileName = `${willyDashId}_${new Date()}.pdf`
-  const pdfFile = await page.pdf({ format: 'a4', path: pdfFileName })
-  fs.writeFileSync('pdfs/' + pdfFileName, pdfFile)
+  if (!fs.existsSync(PDF_DIR)) {
+    fs.mkdirSync(PDF_DIR, { recursive: true })
+  }
+
+  const pdfFileName = `${WILLY_DASH_ID}_${new Date()}.pdf`
+  const pdfFile = await page.pdf({ format: pdfFormat, path: pdfFileName })
+  fs.writeFileSync(PDF_DIR + pdfFileName, pdfFile)
   fs.unlinkSync(pdfFileName)
   logger.info('pdf: created & saved')
 
   await browser.close()
-  logger.info('pdf: finished ' + willyDashId)
+  logger.info('pdf: finished ' + WILLY_DASH_ID)
 }
 
 createDashboardPDF()
