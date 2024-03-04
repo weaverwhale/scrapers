@@ -67,7 +67,7 @@ export const createDashboardPDF = async () => {
   }
 
   const pageHeight = await page.evaluate(() => document.body.scrollHeight)
-  const pdfFileName = `${WILLY_DASH_ID}_${new Date()}.pdf`
+  const pdfFileName = `${WILLY_DASH_ID}_${new Date().getTime()}.pdf`
   const pdfFile = await page.pdf({
     width: DEFAULT_PDF_WIDTH,
     height: pageHeight > 0 ? pageHeight : undefined,
