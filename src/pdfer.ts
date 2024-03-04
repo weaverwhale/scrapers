@@ -1,38 +1,18 @@
 import fs from 'fs'
 import puppeteer from 'puppeteer'
-import chalk from 'chalk'
-
-const logger = {
-  info: (msg) => {
-    console.log(chalk.blue(msg))
-  },
-  error: (msg) => {
-    console.log(chalk.red(msg))
-  },
-}
-
-export function sleep(ms: number) {
-  return new Promise<void>((resolve) => setTimeout(resolve, ms))
-}
-
-const REPORT_ADMIN_USER = 'michael@triplewhale.com'
-const REPORT_ADMIN_PWD = 'TestPassword1'
-
-const willyDashId = 'AmmcFZ69sXEyXk13HYSe'
-const shopDomain = 'madisonbraids.myshopify.com'
-
-const viewportSize = { width: 1240, height: 1754 }
+import { logger, sleep } from './helpers'
+import { REPORT_ADMIN_USER, REPORT_ADMIN_PWD, willyDashId, shopDomain } from './constants'
 
 export const createDashboardPDF = async () => {
   const browser = await puppeteer.launch({
     headless: false,
     timeout: 60000,
-    args: [],
+    args: ['--start-maximized'],
+    defaultViewport: null,
   })
 
   const page = await browser.newPage()
   await page.emulateMediaType('screen')
-  await page.setViewport(viewportSize) //a4
 
   logger.info('pdf: started')
   const appLink = 'https://app.triplewhale.com'
