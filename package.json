@@ -1,6 +1,6 @@
 {
   "scripts": {
-    "pdfer": "tsx pdfer.ts"
+    "pdfer": "tsx src/pdfer.ts"
   },
   "dependencies": {
     "prettier": "^3.2.5",
