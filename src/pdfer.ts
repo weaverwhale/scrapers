@@ -42,7 +42,7 @@ export const createDashboardPDF = async () => {
   logger.info('pdf: logged in')
   await sleep(2000)
 
-  const generatedDateRange = makeDateRange(90)
+  const generatedDateRange = makeDateRange(7)
   const dateRangeString = `&start=${generatedDateRange.start}&end=${generatedDateRange.end}`
   const url = `${APP_LINK}/dashboards/${WILLY_DASH_ID}?shop-id=${SHOP_DOMAIN}${dateRangeString}`
   logger.info('pdf: loading page: ' + url)
