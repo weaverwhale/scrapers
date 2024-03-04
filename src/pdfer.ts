@@ -9,7 +9,7 @@ import {
   SHOP_DOMAIN,
   VIEWPORT_WIDTH,
   VIEWPORT_HEIGHT,
-  PDF_FORMAT,
+  PDF_WIDTH,
 } from './constants'
 
 export const createDashboardPDF = async () => {
@@ -26,7 +26,7 @@ export const createDashboardPDF = async () => {
   })
 
   const page = await browser.newPage()
-  await page.emulateMediaType('screen')
+  await page.emulateMediaType('print')
 
   logger.info('pdf: started')
   const appLink = 'https://app.triplewhale.com'
@@ -61,7 +61,7 @@ export const createDashboardPDF = async () => {
   }
 
   const pdfFileName = `${WILLY_DASH_ID}_${new Date()}.pdf`
-  const pdfFile = await page.pdf({ format: PDF_FORMAT, path: pdfFileName })
+  const pdfFile = await page.pdf({ width: PDF_WIDTH, path: pdfFileName })
   fs.writeFileSync(PDF_DIR + pdfFileName, pdfFile)
   fs.unlinkSync(pdfFileName)
   logger.info('pdf: created & saved')
