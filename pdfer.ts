@@ -22,6 +22,8 @@ const REPORT_ADMIN_PWD = 'TestPassword1'
 const willyDashId = 'AmmcFZ69sXEyXk13HYSe'
 const shopDomain = 'madisonbraids.myshopify.com'
 
+const viewportSize = { width: 2480, height: 3508 }
+
 export const createDashboardPDF = async () => {
   const browser = await puppeteer.launch({
     headless: false,
@@ -29,12 +31,9 @@ export const createDashboardPDF = async () => {
     args: []
   });
 
-  const ua =
-    'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.181 Safari/537.36';
   const page = await browser.newPage();
-  await page.setUserAgent(ua);
   await page.emulateMediaType('screen');
-  await page.setViewport({ width: 700, height: 3000 });
+  await page.setViewport(viewportSize); //a4
 
   logger.info('pdf: started');
   const appLink = 'https://app.triplewhale.com';
@@ -68,8 +67,8 @@ export const createDashboardPDF = async () => {
   logger.info('pdf: element found & sreenshotted: ' + elementToScreenshot);
 
   const pdfFileName = `${willyDashId}_${new Date()}.pdf`;
-  const pdfFile = await page.pdf({ width: 700, height: 3000, path: pdfFileName });
-  fs.writeFileSync(pdfFileName, pdfFile);
+  const pdfFile = await page.pdf({ ...viewportSize, path: pdfFileName });
+  fs.writeFileSync('pdfs/' + pdfFileName, pdfFile);
 
   await browser.close();
 
