@@ -1,11 +1,11 @@
 import chalk from 'chalk'
 
 export const logger = {
-  info: (msg) => {
-    console.log(chalk.blue(msg))
+  info: (...msg) => {
+    console.log(chalk.blue(...msg))
   },
   error: (msg) => {
-    console.log(chalk.red(msg))
+    console.log(chalk.red(...msg))
   },
 }
 

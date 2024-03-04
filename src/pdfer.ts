@@ -1,6 +1,6 @@
 import fs from 'fs'
 import puppeteer from 'puppeteer'
-import { logger, sleep, makeDateRange } from './helpers'
+import { logger, sleep, makeDateRange } from './_helpers'
 import {
   APP_LINK,
   PDF_DIR,
@@ -11,7 +11,7 @@ import {
   VIEWPORT_WIDTH,
   VIEWPORT_HEIGHT,
   DEFAULT_PDF_WIDTH,
-} from './constants'
+} from './_constants'
 
 export const createDashboardPDF = async () => {
   const browser = await puppeteer.launch({
@@ -26,7 +26,7 @@ export const createDashboardPDF = async () => {
     defaultViewport: null,
   })
 
-  logger.info('pdf: started for ' + WILLY_DASH_ID)
+  logger.info('pdf: started ' + WILLY_DASH_ID)
   const page = await browser.newPage()
   await page.emulateMediaType('screen')
 
@@ -45,16 +45,21 @@ export const createDashboardPDF = async () => {
   const generatedDateRange = makeDateRange(7)
   const dateRangeString = `&start=${generatedDateRange.start}&end=${generatedDateRange.end}`
   const url = `${APP_LINK}/dashboards/${WILLY_DASH_ID}?shop-id=${SHOP_DOMAIN}${dateRangeString}`
-  logger.info('pdf: loading page: ' + url)
+  logger.info('pdf: loading page', url)
   await page.goto(url, {
     waitUntil: 'networkidle2',
   })
 
   logger.info('pdf: page loaded; creating pdf')
   await page.evaluate(() => {
-    const header = document.querySelector('.willy-dash-header')
-    const mainPane = document.querySelector('.willy-main-pane')
-    document.body.innerHTML = `<div class="w-full"><div class="p-6.5">${header?.innerHTML}</div>${mainPane?.innerHTML}</div>`
+    const header = document.querySelector('.willy-dash-header') as HTMLElement
+    const mainPane = document.querySelector('.willy-main-pane') as HTMLElement
+    document.body.innerHTML = `
+      <div class="w-full">
+        <div class="p-6.5 pb-0">${header?.innerHTML}</div>
+        ${mainPane?.innerHTML}
+      </div>
+    `
   })
 
   if (!fs.existsSync(PDF_DIR)) {
