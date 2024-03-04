@@ -1,7 +1,8 @@
 import fs from 'fs'
 import puppeteer from 'puppeteer'
-import { logger, sleep } from './helpers'
+import { logger, sleep, makeDateRange } from './helpers'
 import {
+  APP_LINK,
   PDF_DIR,
   REPORT_ADMIN_USER,
   REPORT_ADMIN_PWD,
@@ -25,14 +26,11 @@ export const createDashboardPDF = async () => {
     defaultViewport: null,
   })
 
+  logger.info('pdf: started for ' + WILLY_DASH_ID)
   const page = await browser.newPage()
-  await page.emulateMediaType('print')
+  await page.emulateMediaType('screen')
 
-  logger.info('pdf: started')
-  const appLink = 'https://app.triplewhale.com'
-  const url = `${appLink}/dashboards/${WILLY_DASH_ID}?shop-id=${SHOP_DOMAIN}`
-
-  await page.goto(`${appLink}/signin`, { waitUntil: 'domcontentloaded' })
+  await page.goto(`${APP_LINK}/signin`, { waitUntil: 'domcontentloaded' })
   await page.waitForSelector('#login-email-input', {
     timeout: 10000,
   })
@@ -44,7 +42,10 @@ export const createDashboardPDF = async () => {
   logger.info('pdf: logged in')
   await sleep(2000)
 
-  logger.info('pdf: page loading')
+  const generatedDateRange = makeDateRange(90)
+  const dateRangeString = `&start=${generatedDateRange.start}&end=${generatedDateRange.end}`
+  const url = `${APP_LINK}/dashboards/${WILLY_DASH_ID}?shop-id=${SHOP_DOMAIN}${dateRangeString}`
+  logger.info('pdf: loading page: ' + url)
   await page.goto(url, {
     waitUntil: 'networkidle2',
   })
@@ -64,6 +65,7 @@ export const createDashboardPDF = async () => {
   const pdfFile = await page.pdf({
     width: DEFAULT_PDF_WIDTH,
     path: pdfFileName,
+    printBackground: true,
   })
   fs.writeFileSync(PDF_DIR + pdfFileName, pdfFile)
   fs.unlinkSync(pdfFileName)
