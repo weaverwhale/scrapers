@@ -9,5 +9,5 @@ export const SHOP_DOMAIN = 'trueclassictees-com.myshopify.com'
 export const VIEWPORT_WIDTH = 1440
 export const VIEWPORT_HEIGHT = 1754
 
-export const DEFAULT_PDF_WIDTH = VIEWPORT_WIDTH / 2
+export const DEFAULT_PDF_WIDTH = VIEWPORT_WIDTH - 365
 export const PDF_DIR = 'pdfs/'

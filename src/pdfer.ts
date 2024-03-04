@@ -52,8 +52,8 @@ export const createDashboardPDF = async () => {
 
   logger.info('pdf: page loaded; creating pdf')
   await page.evaluate(() => {
-    const header = document.querySelector('.willy-dash-header') as HTMLElement
-    const mainPane = document.querySelector('.willy-main-pane') as HTMLElement
+    const header = document.querySelector('.willy-dash-header')
+    const mainPane = document.querySelector('.willy-main-pane')
     document.body.innerHTML = `
       <div class="w-full">
         <div class="p-6.5 pb-0">${header?.innerHTML}</div>
@@ -66,9 +66,11 @@ export const createDashboardPDF = async () => {
     fs.mkdirSync(PDF_DIR, { recursive: true })
   }
 
+  const pageHeight = await page.evaluate(() => document.body.scrollHeight)
   const pdfFileName = `${WILLY_DASH_ID}_${new Date()}.pdf`
   const pdfFile = await page.pdf({
     width: DEFAULT_PDF_WIDTH,
+    height: pageHeight > 0 ? pageHeight : undefined,
     path: pdfFileName,
     printBackground: true,
   })
