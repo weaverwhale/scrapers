@@ -27,12 +27,16 @@ export const createDashboardPDF = async () => {
   })
 
   logger.info('pdf: started ' + WILLY_DASH_ID)
+  const ua =
+    'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36'
   const page = await browser.newPage()
   await page.emulateMediaType('screen')
+  await page.setViewport({ width: VIEWPORT_WIDTH, height: VIEWPORT_HEIGHT })
+  await page.setUserAgent(ua)
 
   await page.goto(`${APP_LINK}/signin`, { waitUntil: 'domcontentloaded' })
   await page.waitForSelector('#login-email-input', {
-    timeout: 10000,
+    timeout: 300000,
   })
   await page.type('#login-email-input', REPORT_ADMIN_USER)
   await page.type('#login-password-input', REPORT_ADMIN_PWD)
@@ -48,6 +52,7 @@ export const createDashboardPDF = async () => {
   logger.info('pdf: loading page', url)
   await page.goto(url, {
     waitUntil: 'networkidle2',
+    timeout: 300000,
   })
 
   logger.info('pdf: page loaded; creating pdf')
